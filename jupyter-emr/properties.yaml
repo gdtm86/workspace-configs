@@ -1,6 +1,6 @@
 jupyter:
-  title: "Jupyter (Python, R)"
-  iconUrl: "https://raw.github.com/dominodatalab/workspace-configs/develop/workspace-logos/Jupyter.svg?sanitize=true"
+  title: "Jupyter (Python, AWS EMR Spark)"
+  iconUrl: "https://raw.githubusercontent.com/gdtm86/workspace-configs/develop/workspace-logos/Jupyter-EMR.svg?sanitize=true"
   start: [ "/var/opt/workspaces/jupyter/start" ]
   httpProxy:
     port: 8888
