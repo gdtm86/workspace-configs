@@ -4,7 +4,7 @@ set -o nounset -o errexit -o pipefail
 IP_ADDR=$(/sbin/ifconfig eth0 | grep "inet addr" | cut -d ":" -f2 | cut -d " " -f1)
 CONF_FILE="${HOME}/.jupyter/jupyter_notebook_config.py"
 
-mkdir -p "${CONF_FILE}"
+touch "${CONF_FILE}"
 
 cat <<EOF >>"${CONF_FILE}"
 c.NotebookApp.notebook_dir = '${DRT_WORKING_DIR:-"/"}'

@@ -5,7 +5,8 @@ set -o nounset -o errexit -o pipefail
 pip install jupyter jsonschema sparkmagic pandas==0.22.0
 
 # #   # CONFIGURE Jupyter Nbconvert
-mkdir -p /home/ubuntu/.jupyter/jupyter_nbconvert_config.py
+mkdir -p /home/ubuntu/.jupyter
+touch /home/ubuntu/.jupyter/jupyter_nbconvert_config.py
 echo '# The default cell execution timeout in nbconvert is 30 seconds, set it to a year' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
 echo 'c.ExecutePreprocessor.timeout = 365*24*60*60' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
 
