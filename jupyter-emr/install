@@ -28,4 +28,4 @@ jupyter-kernelspec install sparkmagic/kernels/sparkrkernel
 #Enable the server extension so that clusters can be programatically changed:
 su ubuntu -c '/usr/local/anaconda/bin/jupyter serverextension enable --py sparkmagic'
 
-chown -R ubuntu:ubuntu /home/ubuntu/.jupyter 
+chown -R ubuntu:ubuntu /home/ubuntu/.jupyter
