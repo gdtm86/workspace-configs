@@ -4,32 +4,28 @@ set -o nounset -o errexit -o pipefail
 #install Jupyter
 pip install jupyter jsonschema sparkmagic pandas==0.22.0
 
-# #   # CONFIGURE Jupyter Nbconvert
+### CONFIGURE Jupyter Nbconvert
 mkdir -p /home/ubuntu/.jupyter
 touch /home/ubuntu/.jupyter/jupyter_nbconvert_config.py
 echo '# The default cell execution timeout in nbconvert is 30 seconds, set it to a year' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
 echo 'c.ExecutePreprocessor.timeout = 365*24*60*60' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
 
-# Configure Jupyter Notebook
-#mkdir -p /home/ubuntu/.jupyter/jupyter_notebook_config.py 
-#echo '# Allow embedding of notebooks in iframes' >> /home/ubuntu/.jupyter/jupyter_notebook_config.py 
-#echo 'c.NotebookApp.tornado_settings = { "headers": { "Content-Security-Policy": "frame-ancestors *" } }' >> /home/ubuntu/.jupyter/jupyter_notebook_config.py 
-#echo "c.NotebookApp.token = ''" >> /home/ubuntu/.jupyter/jupyter_notebook_config.py 
+### CONFIGURE SparkMagic
+# Based on Instructions from - https://github.com/jupyter-incubator/sparkmagic 
+SPARKMAGIC_INSTALL_LOCATION=`pip show sparkmagic | grep Location | awk -F':' '{ print $2}'`
+export PATH=/usr/local/anaconda/bin:$PATH
 
-#Custom js for domino header
-#mkdir -p /home/ubuntu/.ipython/profile_default/static/custom/ && echo "require(['base/js/namespace'], function(IPython) { IPython._target='_self'; });" >> /home/ubuntu/.ipython/profile_default/static/custom/custom.js && chown -R ubuntu:ubuntu /home/ubuntu/.ipython 
-#mkdir -p /home/ubuntu/.jupyter
-#rm -f /home/ubuntu/.jupyter/jupyter_notebook_config.py 
-#ln -s /home/ubuntu/.ipython/profile_default/ipython_notebook_config.py /home/ubuntu/.jupyter/jupyter_notebook_config.py 
-#chown -R ubuntu:ubuntu /home/ubuntu/.ipython/profile_default/ipython_notebook_config.py 
-#chown -R ubuntu:ubuntu /home/ubuntu/.jupyter/jupyter_notebook_config.py
-#mkdir -p /home/ubuntu/.jupyter/profile_default/static/custom/ 
-#echo "require(['base/js/namespace'], function(IPython) { IPython._target='_self'; });" >> /home/ubuntu/.jupyter/profile_default/static/custom/custom.js 
-#chown -R ubuntu:ubuntu /home/ubuntu/.jupyter
+#Enable ipywidgets
+su ubuntu -c '/usr/local/anaconda/bin/jupyter nbextension enable --py --sys-prefix widgetsnbextension'
 
-# Disable the login for Jupyter
-#mkdir -p /home/ubuntu/.jupyter 
-#printf "\nc.NotebookApp.token = u'' \n\n" >> /home/ubuntu/.jupyter/jupyter_notebook_config.py
+#Install the wrapper Kernels
+cd $SPARKMAGIC_INSTALL_LOCATION
+jupyter-kernelspec install sparkmagic/kernels/sparkkernel
+jupyter-kernelspec install sparkmagic/kernels/pysparkkernel
+jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel
+jupyter-kernelspec install sparkmagic/kernels/sparkrkernel
+
+#Enable the server extension so that clusters can be programatically changed:
+su ubuntu -c '/usr/local/anaconda/bin/jupyter serverextension enable --py sparkmagic'
+
 chown -R ubuntu:ubuntu /home/ubuntu/.jupyter 
-#chown -R ubuntu:ubuntu /home/ubuntu/
-
