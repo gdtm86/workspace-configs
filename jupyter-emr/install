@@ -18,6 +18,11 @@ SPARKMAGIC_INSTALL_LOCATION=`pip show sparkmagic | grep Location | awk -F':' '{ 
 export PATH=/usr/local/anaconda/bin:$PATH
 echo "completed setting path for sparkmagic"
 
+#Create Sparkmagic directory for ubuntu
+mkdir -p /home/ubuntu/.sparkmagic/logs
+wget -P /home/ubuntu/.sparkmagic/ https://raw.githubusercontent.com/jupyter-incubator/sparkmagic/master/sparkmagic/example_config.json
+mv /home/ubuntu/.sparkmagic/example_config.json /home/ubuntu/.sparkmagic/config.json 
+
 #Enable ipywidgets
 su ubuntu -c '/usr/local/anaconda/bin/jupyter nbextension enable --py --sys-prefix widgetsnbextension'
 echo "completed enabling ipywidgets"
@@ -35,5 +40,3 @@ chown -R ubuntu:ubuntu /home/ubuntu/.jupyter
 #Enable the server extension so that clusters can be programatically changed:
 su ubuntu -c '/usr/local/anaconda/bin/jupyter serverextension enable --py sparkmagic'
 echo "completed enabling sparkmagic"
-
-#chown -R ubuntu:ubuntu /home/ubuntu/.jupyter
