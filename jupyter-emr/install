@@ -3,20 +3,24 @@ set -o nounset -o errexit -o pipefail
 
 #install Jupyter
 pip install jupyter jsonschema sparkmagic pandas==0.22.0
+echo "completed installation of packages"
 
 ### CONFIGURE Jupyter Nbconvert
 mkdir -p /home/ubuntu/.jupyter
 touch /home/ubuntu/.jupyter/jupyter_nbconvert_config.py
 echo '# The default cell execution timeout in nbconvert is 30 seconds, set it to a year' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
 echo 'c.ExecutePreprocessor.timeout = 365*24*60*60' >> /home/ubuntu/.jupyter/jupyter_nbconvert_config.py 
+echo "completed configuring nbconvert"
 
 ### CONFIGURE SparkMagic
 # Based on Instructions from - https://github.com/jupyter-incubator/sparkmagic 
 SPARKMAGIC_INSTALL_LOCATION=`pip show sparkmagic | grep Location | awk -F':' '{ print $2}'`
 export PATH=/usr/local/anaconda/bin:$PATH
+echo "completed setting path for sparkmagic"
 
 #Enable ipywidgets
 su ubuntu -c '/usr/local/anaconda/bin/jupyter nbextension enable --py --sys-prefix widgetsnbextension'
+echo "completed enabling ipywidgets"
 
 #Install the wrapper Kernels
 cd $SPARKMAGIC_INSTALL_LOCATION
@@ -24,8 +28,11 @@ jupyter-kernelspec install sparkmagic/kernels/sparkkernel
 jupyter-kernelspec install sparkmagic/kernels/pysparkkernel
 jupyter-kernelspec install sparkmagic/kernels/pyspark3kernel
 jupyter-kernelspec install sparkmagic/kernels/sparkrkernel
+echo "completed enabling kernels"
 
 #Enable the server extension so that clusters can be programatically changed:
 su ubuntu -c '/usr/local/anaconda/bin/jupyter serverextension enable --py sparkmagic'
+echo "completed enabling sparkmagic"
+
 
 chown -R ubuntu:ubuntu /home/ubuntu/.jupyter
