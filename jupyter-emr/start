@@ -17,7 +17,8 @@ EOF
 
 ## Get Spark Master Node public/private DNS/IP and update /home/ubuntu/.sparkmagic/config.json
 LIVY_SERVERNAME=${DRT_SPARK_MASTER_NODE}
-echo "LIVY Servername is being set as ${LIVY_SERVERNAME}"
+sed -i "s/localhost/${LIVY_SERVERNAME}/g" /home/ubuntu/.sparkmagic/config.json
+echo "Livy server is set to: ${LIVY_SERVERNAME}"
 
 # Replace * in "--ip=*" with the actual IP address of the container
 COMMAND='jupyter notebook --no-browser --ip=* 2>&1'
