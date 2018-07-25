@@ -22,9 +22,13 @@ LIVY_PASSWORD=${DRT_LIVY_SERVER_PASSWORD}
 LIVY_AUTH_TYPE=${DRT_LIVY_SERVER_AUTH_TYPE}
 
 sed -i "s/localhost\:8998/${LIVY_SERVERNAME_PORT}/g" /home/ubuntu/.sparkmagic/config.json
+echo "sed 1"
 sed -i "s/livyusername/${LIVY_USERNAME}/g" /home/ubuntu/.sparkmagic/config.json
+echo "sed 2"
 sed -i "s/livypassword/${LIVY_PASSWORD}/g" /home/ubuntu/.sparkmagic/config.json
+echo "sed 3"
 sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
+echo "sed 4"
 
 echo "Livy server is set to: ${DRT_LIVY_SERVERNAME_PORT}"
 
