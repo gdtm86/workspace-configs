@@ -20,8 +20,9 @@ echo "completed setting path for sparkmagic"
 
 #Create Sparkmagic directory for ubuntu
 mkdir -p /home/ubuntu/.sparkmagic/logs
-wget -P /home/ubuntu/.sparkmagic/ https://raw.githubusercontent.com/jupyter-incubator/sparkmagic/master/sparkmagic/example_config.json
-mv /home/ubuntu/.sparkmagic/example_config.json /home/ubuntu/.sparkmagic/config.json
+#wget -P /home/ubuntu/.sparkmagic/ https://raw.githubusercontent.com/jupyter-incubator/sparkmagic/master/sparkmagic/example_config.json
+#mv /home/ubuntu/.sparkmagic/example_config.json /home/ubuntu/.sparkmagic/config.json
+cp /var/opt/workspaces/jupyter-emr/config.json /home/ubuntu/.sparkmagic/config.json
 chown -R ubuntu:ubuntu /home/ubuntu/.sparkmagic
 
 #Enable ipywidgets

@@ -16,8 +16,16 @@ c.NotebookApp.token = ''
 EOF
 
 ## Get Spark Master Node public/private DNS/IP and update /home/ubuntu/.sparkmagic/config.json
-LIVY_SERVERNAME=${DRT_SPARK_MASTER_NODE}
+LIVY_SERVERNAME=${DRT_LIVY_SERVER_HOSTNAME}
+LIVY_USERNAME=${DRT_LIVY_SERVER_USERNAME}
+LIVY_PASSWORD=${DRT_LIVY_SERVER_PASSWORD}
+LIVY_AUTH_TYPE=${DRT_LIVY_SERVER_AUTH_TYPE}
+
 sed -i "s/localhost/${LIVY_SERVERNAME}/g" /home/ubuntu/.sparkmagic/config.json
+sed -i "s/livyusername/${LIVY_USERNAME}/g" /home/ubuntu/.sparkmagic/config.json
+sed -i "s/livypassword/${LIVY_PASSWORD}/g" /home/ubuntu/.sparkmagic/config.json
+sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
+
 echo "Livy server is set to: ${LIVY_SERVERNAME}"
 
 # Replace * in "--ip=*" with the actual IP address of the container
