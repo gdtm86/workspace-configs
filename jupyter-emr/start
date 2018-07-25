@@ -26,7 +26,7 @@ sed -i "s/livyusername/${LIVY_USERNAME}/g" /home/ubuntu/.sparkmagic/config.json
 sed -i "s/livypassword/${LIVY_PASSWORD}/g" /home/ubuntu/.sparkmagic/config.json
 sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
 
-echo "Livy server is set to: ${LIVY_SERVERNAME}"
+echo "Livy server is set to: ${DRT_LIVY_SERVERNAME_PORT}"
 
 # Replace * in "--ip=*" with the actual IP address of the container
 COMMAND='jupyter notebook --no-browser --ip=* 2>&1'
