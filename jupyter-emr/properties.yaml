@@ -1,5 +1,5 @@
-jupyterEMR:
-  title: "Jupyter-AWS-EMR-Spark(Python, AWS EMR Spark)"
+jupyterSpark:
+  title: "Jupyter-Spark(AWS EMR, GCP Dataproc, Azure HDInsights)"
   iconUrl: "https://raw.githubusercontent.com/gdtm86/workspace-configs/develop/workspace-logos/Jupyter-Spark.svg?sanitize=true"
   start: [ "/var/opt/workspaces/jupyter-emr/start" ]
   httpProxy:
