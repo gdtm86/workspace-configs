@@ -33,12 +33,23 @@ sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
 function launch_aws_emr(){
     echo "launching aws emr spark cluster"
     cp -R /mnt/amazon-emr-spark/.aws /home/ubuntu/
-    echo "debugging ------------------- "
-    cat /home/ubuntu/.domino-defaults
-    source /home/ubuntu/.domino-defaults
-    whoami
     chmod +x /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT}
-    /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT}
+    /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT} | tee /tmp/cluster-launch.out
+    if [ $? -eq 0 ]; then
+        echo "Cluster creation script ran successfully"
+    else
+        echo "Cluster creation script failed. Check your cluster creation script for any invalid arguments"
+        exit 1
+    fi
+    EMR_CLUSTER_ID=`cat /tmp/cluster-launch.out | grep -i id | awk -F'\"' '{ print $4}'`
+    echo "Waiting for the cluster ${EMR_CLUSTER_ID} to be up and running"
+    aws emr wait cluster-running --cluster-id ${EMR_CLUSTER_ID}
+    if [ $? -eq 0 ]; then
+        echo "EMR Spark cluster with id ${EMR_CLUSTER_ID} is now up and running. Check your AWS Console in the region specified in the script."
+    else
+        echo "Cluster creation failed"
+        exit 1
+    fi
 }
 
 function launch_azure_hdinsights(){
