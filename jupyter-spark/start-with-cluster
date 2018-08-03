@@ -33,8 +33,9 @@ sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
 function launch_aws_emr(){
     echo "launching aws emr spark cluster"
     cp -R /mnt/amazon-emr-spark/.aws /home/ubuntu/
+    #cat /home/ubuntu/.domino-defaults
     source /home/ubuntu/.domino-defaults
-    bash /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT}
+    /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT}
 }
 
 function launch_azure_hdinsights(){
