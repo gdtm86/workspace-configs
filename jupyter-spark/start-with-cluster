@@ -1,0 +1,75 @@
+#!/bin/bash
+set -o nounset -o errexit -o pipefail
+
+IP_ADDR=$(/sbin/ifconfig eth0 | grep "inet addr" | cut -d ":" -f2 | cut -d " " -f1)
+
+## Set Jupyter notebook configs
+CONF_FILE="${HOME}/.jupyter/jupyter_notebook_config.py"
+touch "${CONF_FILE}"
+cat <<EOF >>"${CONF_FILE}"
+c.NotebookApp.notebook_dir = '${DRT_WORKING_DIR:-"/"}'
+c.NotebookApp.tornado_settings = {'headers': {'Content-Security-Policy': 'frame-ancestors *'}}
+c.NotebookApp.default_url = '/tree${DOMINO_WORKING_DIR}'
+c.NotebookApp.token = ''
+EOF
+
+## Get environment variables from Domino project settings  
+LIVY_USERNAME=${DRT_LIVY_SERVER_USERNAME} # Username to login to Livy. Most of the time this is None.
+LIVY_PASSWORD=${DRT_LIVY_SERVER_PASSWORD} # Password to login to Livy. Most of the time this is None.
+LIVY_AUTH_TYPE=${DRT_LIVY_SERVER_AUTH_TYPE} # Authentication type. One of 'Basic_Access', 'None', 'Kerberos'. Most common is None.
+LIVY_SSL_ENABLED=${DRT_LIVY_SSL_ENABLED} # SSL enabled? True, Fals
+LAUNCH_SPARK_CLUSTER=${DRT_LAUNCH_SPARK_CLUSTER} # Launch a cluster? true, false. 
+
+## Update /home/ubuntu/.sparkmagic/config.json with project environment variables
+if [ "$LIVY_SSL_ENABLED" = true ] ; then 
+    sed -i "s/http/https/g" /home/ubuntu/.sparkmagic/config.json 
+fi
+sed -i "s/livyusername/${LIVY_USERNAME}/g" /home/ubuntu/.sparkmagic/config.json
+sed -i "s/livypassword/${LIVY_PASSWORD}/g" /home/ubuntu/.sparkmagic/config.json
+sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
+
+
+function launch_aws_emr(){
+    echo "launching aws emr spark cluster"
+}
+
+function launch_azure_hdinsights(){
+    echo "launching azure hdinsights spark cluster"
+}
+
+function launch_gcp_dataproc(){
+    echo "launching gcp dataproc spark cluster"
+}
+
+function launch_spark_cluster(){
+    if [ $1 = azure ]; then
+        launch_azure_hdinsights
+    elif [ $1 = gcp ]; then
+         launch_gcp_dataproc
+    else
+        launch_aws_emr
+    fi    
+}
+
+#Check if user wants to create a new spark cluster
+if [ "$LAUNCH_SPARK_CLUSTER" = true ]; then
+    CLOUD_PROVIDER=${DRT_CLOUD_PROVIDER} # Cloud provider - aws, azure, gcp
+    if [[ "$CLOUD_PROVIDER" = "aws" || "$CLOUD_PROVIDER" = "azure" || "$CLOUD_PROVIDER" = "gcp" ]]; then
+	    launch_spark_cluster $CLOUD_PROVIDER
+    else
+	    echo "Invalid Cloud provider. Valid options are aws, azure, gcp"
+        exit 1
+    fi    
+else
+    #Move the below one to a function that can be called after the cluster is successfully created.
+    LIVY_SERVERNAME_PORT=${DRT_LIVY_SERVERNAME_PORT} #Spark Master Node public/private DNS/IP with port. Ex: xx.xx.xx.xxx:8998 
+    sed -i "s/localhost\:8998/${LIVY_SERVERNAME_PORT}/g" /home/ubuntu/.sparkmagic/config.json
+    echo "Livy server is set to: ${DRT_LIVY_SERVERNAME_PORT}"    
+fi
+
+
+# Replace * in "--ip=*" with the actual IP address of the container
+COMMAND='jupyter notebook --no-browser --ip=* 2>&1'
+FINAL_COMMAND=$(echo "${COMMAND}" | sed "s/--ip=\\*/--ip=${IP_ADDR}/")
+
+eval ${FINAL_COMMAND}
