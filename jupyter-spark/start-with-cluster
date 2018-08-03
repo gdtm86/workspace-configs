@@ -18,7 +18,8 @@ LIVY_USERNAME=${DRT_LIVY_SERVER_USERNAME} # Username to login to Livy. Most of t
 LIVY_PASSWORD=${DRT_LIVY_SERVER_PASSWORD} # Password to login to Livy. Most of the time this is None.
 LIVY_AUTH_TYPE=${DRT_LIVY_SERVER_AUTH_TYPE} # Authentication type. One of 'Basic_Access', 'None', 'Kerberos'. Most common is None.
 LIVY_SSL_ENABLED=${DRT_LIVY_SSL_ENABLED} # SSL enabled? True, False
-LAUNCH_SPARK_CLUSTER=${DRT_LAUNCH_SPARK_CLUSTER} # Launch a cluster? true, false. 
+LAUNCH_SPARK_CLUSTER=${DRT_LAUNCH_SPARK_CLUSTER} # Launch a cluster? true, false.
+CLUSTER_LAUNCH_SCRIPT=${DRT_CLUSTER_LAUNCH_SCRIPT} #Name of the launch script 
 
 ## Update /home/ubuntu/.sparkmagic/config.json with project environment variables
 if [ "$LIVY_SSL_ENABLED" = true ] ; then 
@@ -31,7 +32,8 @@ sed -i "s/livyauth/${LIVY_AUTH_TYPE}/g" /home/ubuntu/.sparkmagic/config.json
 
 function launch_aws_emr(){
     echo "launching aws emr spark cluster"
-    cat /mnt/amazon-emr-spark/.aws/config
+    cp -R /mnt/amazon-emr-spark/.aws /home/ubuntu/
+    bash /mnt/amazon-emr-spark/${CLUSTER_LAUNCH_SCRIPT}
 }
 
 function launch_azure_hdinsights(){
